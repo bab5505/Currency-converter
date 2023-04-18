@@ -1,30 +1,45 @@
 from flask import Flask, render_template, request, make_response
-from conv import currency_converter
 
 app = Flask(__name__)
 
-# Route for home page
+# Currency conversion rates
+CONVERSION_RATES = {
+    'USD': {'EUR': 0.8516, 'GBP': 0.7331},
+    'EUR': {'USD': 1.1737, 'GBP': 0.8594},
+    'GBP': {'USD': 1.3637, 'EUR': 1.1628}
+}
+
 @app.route('/', methods=['GET', 'POST'])
-def home():
+def currency_converter():
     if request.method == 'POST':
-        # Get form inputs
-        currency_from = request.form['currency_from']
-        currency_to = request.form['currency_to']
-        amount = request.form['amount']
+        try:
+            # Get form data
+            from_currency = request.form['from_currency'].upper()
+            to_currency = request.form['to_currency'].upper()
+            amount = float(request.form['amount'])
 
-        # Call the currency_converter function from conv module
-        converted_amount, error = currency_converter(currency_from, currency_to, amount)
+            # Perform conversion
+            if from_currency in CONVERSION_RATES and to_currency in CONVERSION_RATES[from_currency]:
+                exchange_rate = CONVERSION_RATES[from_currency][to_currency]
+                converted_amount = amount * exchange_rate
+                converted_amount_rounded = round(converted_amount, 2)
 
-        if error:
-            return render_template('index.html', error=error)
-        else:
-            # Create Response object
-            response = make_response(render_template('index.html', converted_amount=converted_amount))
+                # Create Response object
+                response = make_response(render_template('result.html', from_currency=from_currency, to_currency=to_currency,
+                                           amount=amount, exchange_rate=exchange_rate,
+                                           converted_amount=converted_amount_rounded))
 
-            # Set SameSite attribute for the cookie
-            response.set_cookie('my_cookie', 'cookie_value', samesite='None', secure=True)
+                # Set SameSite attribute for the cookie
+                response.set_cookie('my_cookie', 'cookie_value', samesite='None', secure=True)
 
-            return response
+                return response
+            else:
+                error_message = 'Invalid currency codes'
+                return render_template('error.html', error_message=error_message)
+        except ValueError:
+            error_message = 'Invalid amount'
+            return render_template('error.html', error_message=error_message)
+    return render_template('form.html')
 
     return render_template('index.html')
 
