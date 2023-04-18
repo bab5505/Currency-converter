@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Conversion Form</h2>
+    <form method="post" action="/">
+        <label for="from_currency">From:</label>
+        <select id="from_currency" name="from_currency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+        </select>
+        <br>
+        <label for="to_currency">To:</label>
+        <select id="to_currency" name="to_currency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+        </select>
+        <br>
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount">
+        <br>
+        <input type="submit" value="Convert">
+    </form>
+{% endblock %}

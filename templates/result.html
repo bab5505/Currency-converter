@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Conversion Result</h2>
+    <p>From: {{ from_currency }}</p>
+    <p>To: {{ to_currency }}</p>
+    <p>Amount: {{ amount }}</p>
+    <p>Exchange Rate: {{ exchange_rate }}</p>
+    <p>Converted Amount: {{ converted_amount }}</p>
+{% endblock %}
